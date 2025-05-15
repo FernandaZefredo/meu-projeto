@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curso de Digitação Básica</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      color: #333;
+    }
+    .content {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+    }
+    #text-to-type {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      background-color: #eef;
+      border-left: 4px solid #4477aa;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      font-size: 1rem;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 0.7rem 1.5rem;
+      background: #4477aa;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-right: 0.5rem;
+    }
+    .results {
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    #timer {
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: #aa4444;
+    }
+  </style>
+</head>
+<body>
+  <h1>Curso de Noções Básicas de Digitação</h1>
+  <div class="content">
+    <div id="timer">Tempo: 60s</div>
+    <div id="text-to-type"></div>
+    <textarea id="user-input" placeholder="Digite o texto acima aqui..." oninput="startTimer()"></textarea>
+    <button onclick="checkTyping()">Verificar</button>
+    <button onclick="nextPhrase()">Nova Frase</button>
+    <button onclick="resetAll()">Reiniciar</button>
+    <div class="results" id="results"></div>
+  </div>
+
+  <script>
+    const phrases = [
+      "A prática constante leva à perfeição na digitação.",
+      "Digitar bem ajuda na produtividade do dia a dia.",
+      "Mantenha os dedos na posição correta do teclado.",
+      "A velocidade aumenta com o tempo e prática.",
+      "Concentre-se e evite olhar para o teclado."
+    ];
+
+    let currentPhrase = "";
+    let timer = 60;
+    let interval = null;
+    let timerStarted = false;
+
+    function startTimer() {
+      if (!timerStarted) {
+        timerStarted = true;
+        interval = setInterval(() => {
+          timer--;
+          document.getElementById("timer").textContent = `Tempo: ${timer}s`;
+          if (timer <= 0) {
+            clearInterval(interval);
+            document.getElementById("user-input").disabled = true;
+            checkTyping();
+          }
+        }, 1000);
+      }
+    }
+
+    function showPhrase() {
+      currentPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+      document.getElementById("text-to-type").textContent = currentPhrase;
+      document.getElementById("user-input").value = "";
+      document.getElementById("results").innerHTML = "";
+      document.getElementById("user-input").disabled = false;
+      document.getElementById("user-input").focus();
+    }
+
+    function checkTyping() {
+      const userText = document.getElementById("user-input").value;
+      let correct = 0;
+      let errors = 0;
+      const minLength = Math.min(userText.length, currentPhrase.length);
+
+      for (let i = 0; i < minLength; i++) {
+        if (userText[i] === currentPhrase[i]) {
+          correct++;
+        } else {
+          errors++;
+        }
+      }
+
+      errors += Math.abs(userText.length - currentPhrase.length);
+      const accuracy = ((correct / currentPhrase.length) * 100).toFixed(2);
+
+      document.getElementById("results").innerHTML = `
+        <p><strong>Caracteres corretos:</strong> ${correct}</p>
+        <p><strong>Erros:</strong> ${errors}</p>
+        <p><strong>Precisão:</strong> ${accuracy}%</p>
+      `;
+    }
+
+    function nextPhrase() {
+      resetTimer();
+      showPhrase();
+    }
+
+    function resetTimer() {
+      clearInterval(interval);
+      timer = 60;
+      timerStarted = false;
+      document.getElementById("timer").textContent = `Tempo: ${timer}s`;
+    }
+
+    function resetAll() {
+      resetTimer();
+      showPhrase();
+    }
+
+    window.onload = () => {
+      showPhrase();
+    };
+  </script>
+</body>
+</html>
